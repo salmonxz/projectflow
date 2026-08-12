@@ -5,6 +5,21 @@ async function seed() {
   console.log('🌱 Seeding ProjectFlow Database with Portfolio Demo Data...');
 
   try {
+    // Reset existing database tables cleanly
+    await pool.query('SET FOREIGN_KEY_CHECKS = 0');
+    await pool.query('TRUNCATE TABLE notifications');
+    await pool.query('TRUNCATE TABLE activity_logs');
+    await pool.query('TRUNCATE TABLE attachments');
+    await pool.query('TRUNCATE TABLE comments');
+    await pool.query('TRUNCATE TABLE tasks');
+    await pool.query('TRUNCATE TABLE project_members');
+    await pool.query('TRUNCATE TABLE projects');
+    await pool.query('TRUNCATE TABLE users');
+    await pool.query('TRUNCATE TABLE positions');
+    await pool.query('TRUNCATE TABLE roles');
+    await pool.query('SET FOREIGN_KEY_CHECKS = 1');
+    console.log('🧹 Cleaned existing database tables');
+
     // 1. Roles
     const roles = [
       [1, 'Administrator', 'System administrator with full permissions to manage users, roles, positions, system settings, and inspect system logs.'],
@@ -14,8 +29,7 @@ async function seed() {
 
     for (const [id, name, description] of roles) {
       await pool.query(
-        `INSERT INTO roles (id, name, description) VALUES (?, ?, ?)
-         ON DUPLICATE KEY UPDATE name=VALUES(name), description=VALUES(description)`,
+        `INSERT INTO roles (id, name, description) VALUES (?, ?, ?)`,
         [id, name, description]
       );
     }
@@ -39,8 +53,7 @@ async function seed() {
 
     for (const [id, name, description, is_active] of positions) {
       await pool.query(
-        `INSERT INTO positions (id, name, description, is_active) VALUES (?, ?, ?, ?)
-         ON DUPLICATE KEY UPDATE name=VALUES(name), description=VALUES(description), is_active=VALUES(is_active)`,
+        `INSERT INTO positions (id, name, description, is_active) VALUES (?, ?, ?, ?)`,
         [id, name, description, is_active]
       );
     }
@@ -54,12 +67,12 @@ async function seed() {
 
     // 4. Users (Demo & Sample Accounts)
     const users = [
-      // Demo Accounts (Requirements 4, 6, 7, 8)
+      // Demo Accounts
       [10, 'Demo Administrator', 'demo-admin@projectflow.demo', adminPassHash, 1, 1, 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150', 'Active'],
       [11, 'Demo Project Manager', 'demo-manager@projectflow.demo', managerPassHash, 2, 2, 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150', 'Active'],
       [12, 'Demo Member', 'demo-member@projectflow.demo', memberPassHash, 3, 3, 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150', 'Active'],
 
-      // Existing accounts for realistic team context
+      // Sample accounts for realistic team context
       [1, 'Ryehan Alfiansyah', 'admin@gmail.com', defaultPassHash, 1, 1, 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150', 'Active'],
       [2, 'Budi Pratama', 'manager@gmail.com', defaultPassHash, 2, 2, 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150', 'Active'],
       [3, 'Ryehan (Frontend)', 'frontend@gmail.com', defaultPassHash, 3, 3, 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150', 'Active'],
@@ -71,8 +84,7 @@ async function seed() {
     for (const [id, name, email, password, role_id, position_id, avatar, status] of users) {
       await pool.query(
         `INSERT INTO users (id, name, email, password, role_id, position_id, avatar, status)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-         ON DUPLICATE KEY UPDATE name=VALUES(name), email=VALUES(email), password=VALUES(password), role_id=VALUES(role_id), position_id=VALUES(position_id), avatar=VALUES(avatar), status=VALUES(status)`,
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
         [id, name, email, password, role_id, position_id, avatar, status]
       );
     }
@@ -89,14 +101,13 @@ async function seed() {
     for (const [id, name, description, client_name, start_date, due_date, status, project_manager_id] of projects) {
       await pool.query(
         `INSERT INTO projects (id, name, description, client_name, start_date, due_date, status, project_manager_id)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-         ON DUPLICATE KEY UPDATE name=VALUES(name), description=VALUES(description), client_name=VALUES(client_name), start_date=VALUES(start_date), due_date=VALUES(due_date), status=VALUES(status), project_manager_id=VALUES(project_manager_id)`,
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
         [id, name, description, client_name, start_date, due_date, status, project_manager_id]
       );
     }
     console.log('✅ Projects seeded');
 
-    // 6. Project Members (Demo Member ID: 12 is in projects 1, 2, 3, 4)
+    // 6. Project Members
     const projectMembers = [
       [1, 1, 12], // Demo Member (Frontend) in Project 1
       [2, 1, 4],  // Andi (Backend) in Project 1
@@ -113,14 +124,13 @@ async function seed() {
     for (const [id, project_id, user_id] of projectMembers) {
       await pool.query(
         `INSERT INTO project_members (id, project_id, user_id)
-         VALUES (?, ?, ?)
-         ON DUPLICATE KEY UPDATE project_id=VALUES(project_id), user_id=VALUES(user_id)`,
+         VALUES (?, ?, ?)`,
         [id, project_id, user_id]
       );
     }
     console.log('✅ Project Members seeded');
 
-    // 7. Tasks (Required: Demo Member ID: 12 has multiple tasks: Todo, In Progress, Review, Completed)
+    // 7. Tasks
     const tasks = [
       // Project 1 Tasks
       [1, 1, 'Design Homepage', 'Create high-fidelity wireframes and component library in Figma for dark/light themes.', 5, 6, 'High', 'Completed', '2026-08-01', '2026-08-10', 11],
@@ -145,8 +155,7 @@ async function seed() {
     for (const [id, project_id, title, description, assigned_to, required_position_id, priority, status, start_date, due_date, created_by] of tasks) {
       await pool.query(
         `INSERT INTO tasks (id, project_id, title, description, assigned_to, required_position_id, priority, status, start_date, due_date, created_by)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-         ON DUPLICATE KEY UPDATE title=VALUES(title), description=VALUES(description), assigned_to=VALUES(assigned_to), required_position_id=VALUES(required_position_id), priority=VALUES(priority), status=VALUES(status), start_date=VALUES(start_date), due_date=VALUES(due_date)`,
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [id, project_id, title, description, assigned_to, required_position_id, priority, status, start_date, due_date, created_by]
       );
     }
@@ -163,8 +172,7 @@ async function seed() {
     for (const [id, task_id, user_id, content, created_at] of comments) {
       await pool.query(
         `INSERT INTO comments (id, task_id, user_id, content, created_at)
-         VALUES (?, ?, ?, ?, ?)
-         ON DUPLICATE KEY UPDATE content=VALUES(content)`,
+         VALUES (?, ?, ?, ?, ?)`,
         [id, task_id, user_id, content, created_at]
       );
     }
@@ -183,8 +191,7 @@ async function seed() {
     for (const [id, user_id, project_id, entity_type, entity_id, action, description, created_at] of activities) {
       await pool.query(
         `INSERT INTO activity_logs (id, user_id, project_id, entity_type, entity_id, action, description, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-         ON DUPLICATE KEY UPDATE description=VALUES(description)`,
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
         [id, user_id, project_id, entity_type, entity_id, action, description, created_at]
       );
     }
@@ -201,8 +208,7 @@ async function seed() {
     for (const [id, user_id, type, message, is_read, created_at] of notifications) {
       await pool.query(
         `INSERT INTO notifications (id, user_id, type, message, is_read, created_at)
-         VALUES (?, ?, ?, ?, ?, ?)
-         ON DUPLICATE KEY UPDATE message=VALUES(message)`,
+         VALUES (?, ?, ?, ?, ?, ?)`,
         [id, user_id, type, message, is_read, created_at]
       );
     }
