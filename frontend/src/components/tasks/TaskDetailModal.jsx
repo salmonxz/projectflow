@@ -579,7 +579,7 @@ export const TaskDetailModal = ({ taskId, isOpen, onClose, onTaskUpdated }) => {
                               href={
                                 att.file_path.startsWith('http') || att.file_path.startsWith('data:')
                                   ? att.file_path
-                                  : `${import.meta.env.VITE_UPLOAD_URL || (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '') : '')}${att.file_path}`
+                                  : `${import.meta.env.VITE_UPLOAD_URL || (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '') : (import.meta.env.DEV ? 'http://localhost:5000' : ''))}${att.file_path}`
                               }
                               target="_blank"
                               rel="noreferrer"
