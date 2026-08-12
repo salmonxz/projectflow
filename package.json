@@ -1,0 +1,10 @@
+{
+  "name": "projectflow-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ProjectFlow SaaS Monorepo Workspace",
+  "scripts": {
+    "build": "cd frontend && npm install && npm run build",
+    "seed": "cd backend && npm run seed"
+  }
+}

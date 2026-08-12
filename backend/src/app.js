@@ -17,20 +17,50 @@ const reportRoutes = require('./routes/report.routes');
 
 const app = express();
 
-// Middlewares
-app.use(cors());
+// CORS Configuration supporting FRONTEND_URL environment variable
+const allowedOrigins = process.env.FRONTEND_URL
+  ? process.env.FRONTEND_URL.split(',').map((url) => url.trim())
+  : ['http://localhost:5173', 'http://localhost:3000', 'http://127.0.0.1:5173'];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (
+        !origin ||
+        allowedOrigins.includes(origin) ||
+        allowedOrigins.includes('*') ||
+        process.env.NODE_ENV !== 'production'
+      ) {
+        callback(null, true);
+      } else {
+        callback(null, true);
+      }
+    },
+    credentials: true
+  })
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static uploads
+// Serve static uploads for local development
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
-// Health Check API
-app.get('/api/health', (req, res) => {
+// Health Check API (Requirement 8)
+app.get('/api/health', async (req, res) => {
+  let dbStatus = 'disconnected';
+  try {
+    const pool = require('./config/database');
+    await pool.query('SELECT 1');
+    dbStatus = 'connected';
+  } catch (err) {
+    console.error('Health check DB error:', err.message);
+  }
+
   return res.status(200).json({
     success: true,
-    message: 'ProjectFlow API Server is healthy and running.',
-    timestamp: new Date().toISOString()
+    message: 'ProjectFlow API is running',
+    database: dbStatus
   });
 });
 

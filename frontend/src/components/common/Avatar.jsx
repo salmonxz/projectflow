@@ -22,7 +22,9 @@ export const Avatar = ({ name, src, size = 'md', className = '' }) => {
   const selectedSize = sizeClasses[size] || sizeClasses.md;
 
   if (src) {
-    const avatarUrl = src.startsWith('http') ? src : `http://localhost:5000${src}`;
+    const uploadBase = import.meta.env.VITE_UPLOAD_URL || (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '') : '');
+    const avatarUrl = (src.startsWith('http') || src.startsWith('data:')) ? src : `${uploadBase}${src}`;
+
     return (
       <img
         src={avatarUrl}

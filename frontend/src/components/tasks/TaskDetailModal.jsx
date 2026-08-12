@@ -576,7 +576,11 @@ export const TaskDetailModal = ({ taskId, isOpen, onClose, onTaskUpdated }) => {
 
                           <div className="flex items-center space-x-2">
                             <a
-                              href={`http://localhost:5000${att.file_path}`}
+                              href={
+                                att.file_path.startsWith('http') || att.file_path.startsWith('data:')
+                                  ? att.file_path
+                                  : `${import.meta.env.VITE_UPLOAD_URL || (import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/api\/?$/, '') : '')}${att.file_path}`
+                              }
                               target="_blank"
                               rel="noreferrer"
                               className="p-2 rounded-xl bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors shadow-xs"
