@@ -2,7 +2,7 @@ const pool = require('../src/config/database');
 const bcrypt = require('bcryptjs');
 
 async function seed() {
-  console.log('🌱 Seeding ProjectFlow Database with Portfolio Demo Data...');
+  console.log('🌱 Seeding ProjectFlow Database with Real Team & Portfolio Demo Data...');
 
   try {
     // Reset existing database tables cleanly
@@ -28,14 +28,11 @@ async function seed() {
     ];
 
     for (const [id, name, description] of roles) {
-      await pool.query(
-        `INSERT INTO roles (id, name, description) VALUES (?, ?, ?)`,
-        [id, name, description]
-      );
+      await pool.query(`INSERT INTO roles (id, name, description) VALUES (?, ?, ?)`, [id, name, description]);
     }
     console.log('✅ Roles seeded');
 
-    // 2. Positions
+    // 2. Job Positions
     const positions = [
       [1, 'System Administrator', 'Infrastructure, user access, and system security management', 1],
       [2, 'Project Manager', 'Project planning, scope management, team coordination, and delivery', 1],
@@ -52,10 +49,7 @@ async function seed() {
     ];
 
     for (const [id, name, description, is_active] of positions) {
-      await pool.query(
-        `INSERT INTO positions (id, name, description, is_active) VALUES (?, ?, ?, ?)`,
-        [id, name, description, is_active]
-      );
+      await pool.query(`INSERT INTO positions (id, name, description, is_active) VALUES (?, ?, ?, ?)`, [id, name, description, is_active]);
     }
     console.log('✅ Positions seeded');
 
@@ -65,97 +59,85 @@ async function seed() {
     const memberPassHash = await bcrypt.hash('DemoMember123!', 10);
     const defaultPassHash = await bcrypt.hash('password123', 10);
 
-    // 4. Users (Demo & Sample Accounts)
+    // 4. Users (Team Members: Ryehan, Ravir, Yosiana, Rivai + Portfolio Demo Accounts)
     const users = [
-      // Demo Accounts
+      // Portfolio Demo Accounts
       [10, 'Demo Administrator', 'demo-admin@projectflow.demo', adminPassHash, 1, 1, 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150', 'Active'],
       [11, 'Demo Project Manager', 'demo-manager@projectflow.demo', managerPassHash, 2, 2, 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150', 'Active'],
       [12, 'Demo Member', 'demo-member@projectflow.demo', memberPassHash, 3, 3, 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150', 'Active'],
 
-      // Sample accounts for realistic team context
+      // Real Team Accounts (Ryehan, Ravir, Yosiana, Rivai)
       [1, 'Ryehan Alfiansyah', 'admin@gmail.com', defaultPassHash, 1, 1, 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150', 'Active'],
-      [2, 'Budi Pratama', 'manager@gmail.com', defaultPassHash, 2, 2, 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150', 'Active'],
-      [3, 'Ryehan (Frontend)', 'frontend@gmail.com', defaultPassHash, 3, 3, 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150', 'Active'],
-      [4, 'Andi Wijaya', 'backend@gmail.com', defaultPassHash, 3, 4, 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150', 'Active'],
-      [5, 'Sinta Maharani', 'designer@gmail.com', defaultPassHash, 3, 6, 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150', 'Active'],
-      [6, 'Dimas Prasetyo', 'qa@gmail.com', defaultPassHash, 3, 8, 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150', 'Active']
+      [2, 'Ravir', 'ravir@gmail.com', defaultPassHash, 2, 2, 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150', 'Active'],
+      [3, 'Yosiana', 'yosiana@gmail.com', defaultPassHash, 3, 6, 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150', 'Active'],
+      [4, 'Rivai', 'rivai@gmail.com', defaultPassHash, 3, 4, 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150', 'Active']
     ];
 
     for (const [id, name, email, password, role_id, position_id, avatar, status] of users) {
       await pool.query(
-        `INSERT INTO users (id, name, email, password, role_id, position_id, avatar, status)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO users (id, name, email, password, role_id, position_id, avatar, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
         [id, name, email, password, role_id, position_id, avatar, status]
       );
     }
-    console.log('✅ Demo & Sample Users seeded');
+    console.log('✅ Team Users seeded (Ryehan, Ravir, Yosiana, Rivai & Demo accounts)');
 
-    // 5. Projects Managed by Demo PM (ID: 11) & PM (ID: 2)
+    // 5. Projects (Managed by Ravir ID: 2 & Demo PM ID: 11)
     const projects = [
-      [1, 'Website Company Profile', 'Redesign and development of modern corporate web application with interactive product showcase, lead generator, and customer portal.', 'PT Telkom Indonesia', '2026-08-01', '2026-09-30', 'On Going', 11],
-      [2, 'E-Commerce Mobile Application', 'Cross-platform mobile app development with real-time inventory management, payment gateway integration, and order tracking.', 'Tokopedia Marketplace', '2026-07-15', '2026-10-15', 'On Going', 11],
+      [1, 'Website Company Profile', 'Redesign and development of modern corporate web application with interactive product showcase, lead generator, and customer portal.', 'PT Telkom Indonesia', '2026-08-01', '2026-09-30', 'On Going', 2],
+      [2, 'E-Commerce Mobile Application', 'Cross-platform mobile app development with real-time inventory management, payment gateway integration, and order tracking.', 'Tokopedia Marketplace', '2026-07-15', '2026-10-15', 'On Going', 2],
       [3, 'Internal Logistics Dashboard', 'Enterprise resource analytics dashboard for monitoring fleet status, supply chain routes, and delivery efficiency metrics.', 'JNE Express', '2026-06-01', '2026-08-15', 'Completed', 11],
       [4, 'SaaS Analytics Platform', 'Cloud-based multi-tenant analytics dashboard with automated PDF reporting and real-time WebSocket metrics.', 'ProjectFlow Tech', '2026-08-05', '2026-11-01', 'On Going', 11]
     ];
 
     for (const [id, name, description, client_name, start_date, due_date, status, project_manager_id] of projects) {
       await pool.query(
-        `INSERT INTO projects (id, name, description, client_name, start_date, due_date, status, project_manager_id)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO projects (id, name, description, client_name, start_date, due_date, status, project_manager_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
         [id, name, description, client_name, start_date, due_date, status, project_manager_id]
       );
     }
     console.log('✅ Projects seeded');
 
-    // 6. Project Members
+    // 6. Project Members (Yosiana ID: 3, Rivai ID: 4, Demo Member ID: 12)
     const projectMembers = [
-      [1, 1, 12], // Demo Member (Frontend) in Project 1
-      [2, 1, 4],  // Andi (Backend) in Project 1
-      [3, 1, 5],  // Sinta (UI/UX) in Project 1
-      [4, 1, 6],  // Dimas (QA) in Project 1
-      [5, 2, 12], // Demo Member in Project 2
-      [6, 2, 4],  // Andi in Project 2
-      [7, 2, 5],  // Sinta in Project 2
-      [8, 3, 12], // Demo Member in Project 3
-      [9, 3, 4],  // Andi in Project 3
-      [10, 4, 12] // Demo Member in Project 4
+      [1, 1, 3],  // Yosiana (UI/UX) in Project 1
+      [2, 1, 4],  // Rivai (Backend) in Project 1
+      [3, 1, 12], // Demo Member (Frontend) in Project 1
+      [4, 2, 3],  // Yosiana in Project 2
+      [5, 2, 4],  // Rivai in Project 2
+      [6, 2, 12], // Demo Member in Project 2
+      [7, 3, 3],  // Yosiana in Project 3
+      [8, 3, 4],  // Rivai in Project 3
+      [9, 4, 12]  // Demo Member in Project 4
     ];
 
     for (const [id, project_id, user_id] of projectMembers) {
-      await pool.query(
-        `INSERT INTO project_members (id, project_id, user_id)
-         VALUES (?, ?, ?)`,
-        [id, project_id, user_id]
-      );
+      await pool.query(`INSERT INTO project_members (id, project_id, user_id) VALUES (?, ?, ?)`, [id, project_id, user_id]);
     }
     console.log('✅ Project Members seeded');
 
     // 7. Tasks
     const tasks = [
       // Project 1 Tasks
-      [1, 1, 'Design Homepage', 'Create high-fidelity wireframes and component library in Figma for dark/light themes.', 5, 6, 'High', 'Completed', '2026-08-01', '2026-08-10', 11],
-      [2, 1, 'Create REST API', 'Implement JWT token generation, bcrypt password hashing, login & logout routes.', 4, 4, 'Urgent', 'In Progress', '2026-08-02', '2026-08-08', 11],
-      [3, 1, 'Build Homepage', 'Build responsive hero section, feature cards, pricing tiers, and client logos using Tailwind CSS.', 12, 3, 'High', 'Todo', '2026-08-05', '2026-08-18', 11],
-      [4, 1, 'Implement Navbar', 'Develop sticky header navbar with notifications drawer, user avatar dropdown, and responsive mobile menu.', 12, 3, 'Medium', 'In Progress', '2026-08-09', '2026-08-20', 11],
-      [5, 1, 'Testing Login', 'Configure Playwright test suites for testing user authorization and critical workflows.', 6, 8, 'Medium', 'Review', '2026-08-15', '2026-08-25', 11],
-      [6, 1, 'Responsive Dashboard', 'Optimize dashboard grid layout for mobile tablets and high-DPI desktop viewports.', 12, 3, 'Urgent', 'Review', '2026-08-07', '2026-08-14', 11],
-      [7, 1, 'Fix Mobile Layout', 'Fix padding overflow and font scaling issues on mobile Safari browser.', 12, 3, 'Low', 'Completed', '2026-08-02', '2026-08-10', 11],
+      [1, 1, 'Design Figma Wireframes & UI Kit', 'Create high-fidelity wireframes and component library in Figma.', 3, 6, 'High', 'Completed', '2026-08-01', '2026-08-10', 2],
+      [2, 1, 'Create REST API Authentication', 'Implement JWT token generation, bcrypt password hashing, login & logout routes.', 4, 4, 'Urgent', 'In Progress', '2026-08-02', '2026-08-08', 2],
+      [3, 1, 'Build Homepage', 'Build responsive hero section, feature cards, pricing tiers, and client logos using Tailwind CSS.', 12, 3, 'High', 'Todo', '2026-08-05', '2026-08-18', 2],
+      [4, 1, 'Implement Navbar', 'Develop sticky header navbar with notifications drawer, user avatar dropdown, and responsive mobile menu.', 12, 3, 'Medium', 'In Progress', '2026-08-09', '2026-08-20', 2],
+      [5, 1, 'Responsive Dashboard', 'Optimize dashboard grid layout for mobile tablets and high-DPI desktop viewports.', 12, 3, 'Urgent', 'Review', '2026-08-07', '2026-08-14', 2],
+      [6, 1, 'Fix Mobile Layout', 'Fix padding overflow and font scaling issues on mobile Safari browser.', 12, 3, 'Low', 'Completed', '2026-08-02', '2026-08-10', 2],
 
       // Project 2 Tasks
-      [8, 2, 'Mobile Product Catalog UI Wireframes', 'Design mobile shopping screen flow, filtering drawer, and product details view.', 5, 6, 'High', 'Completed', '2026-07-16', '2026-07-25', 11],
-      [9, 2, 'Setup Express E-Commerce Microservice', 'Build REST endpoints for products catalog, category taxonomy, and full-text search.', 4, 4, 'Urgent', 'In Progress', '2026-07-26', '2026-08-22', 11],
-      [10, 2, 'React Native Product Search Component', 'Develop search bar with debounce, instant auto-suggestions, and filter badges.', 12, 3, 'Medium', 'Todo', '2026-08-12', '2026-08-26', 11],
-      [11, 2, 'Cart & Checkout Integration Tests', 'Write integration tests for shopping cart calculation, coupon discounts, and tax rates.', 6, 8, 'High', 'Review', '2026-08-08', '2026-08-16', 11],
+      [7, 2, 'Mobile Product Catalog UI Wireframes', 'Design mobile shopping screen flow, filtering drawer, and product details view.', 3, 6, 'High', 'Completed', '2026-07-16', '2026-07-25', 2],
+      [8, 2, 'Setup Express E-Commerce Microservice', 'Build REST endpoints for products catalog, category taxonomy, and full-text search.', 4, 4, 'Urgent', 'In Progress', '2026-07-26', '2026-08-22', 2],
+      [9, 2, 'React Native Product Search Component', 'Develop search bar with debounce, instant auto-suggestions, and filter badges.', 12, 3, 'Medium', 'Todo', '2026-08-12', '2026-08-26', 2],
 
-      // Project 3 Tasks (Completed)
-      [12, 3, 'Fleet Tracker Database Schema', 'Design normalized MySQL database tables for vehicles, routes, drivers, and delivery logs.', 4, 4, 'High', 'Completed', '2026-06-02', '2026-06-12', 11],
-      [13, 3, 'Build Real-time Map Dashboard UI', 'Implement Leaflet/Mapbox map component showing live GPS vehicle locations.', 12, 3, 'Urgent', 'Completed', '2026-06-13', '2026-07-05', 11]
+      // Project 3 Tasks
+      [10, 3, 'Fleet Tracker Database Schema', 'Design normalized MySQL database tables for vehicles, routes, drivers, and delivery logs.', 4, 4, 'High', 'Completed', '2026-06-02', '2026-06-12', 11],
+      [11, 3, 'Build Real-time Map Dashboard UI', 'Implement Leaflet/Mapbox map component showing live GPS vehicle locations.', 3, 6, 'Urgent', 'Completed', '2026-06-13', '2026-07-05', 11]
     ];
 
     for (const [id, project_id, title, description, assigned_to, required_position_id, priority, status, start_date, due_date, created_by] of tasks) {
       await pool.query(
-        `INSERT INTO tasks (id, project_id, title, description, assigned_to, required_position_id, priority, status, start_date, due_date, created_by)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO tasks (id, project_id, title, description, assigned_to, required_position_id, priority, status, start_date, due_date, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [id, project_id, title, description, assigned_to, required_position_id, priority, status, start_date, due_date, created_by]
       );
     }
@@ -163,35 +145,28 @@ async function seed() {
 
     // 8. Comments
     const comments = [
-      [1, 2, 4, 'API endpoints for authentication are ready and fully tested on Postman.', '2026-08-08 14:20:00'],
-      [2, 4, 12, 'Implement Navbar is currently in progress. Mobile drawer menu completed!', '2026-08-10 11:45:00'],
-      [3, 6, 12, 'Responsive Dashboard is ready for PM review.', '2026-08-11 16:30:00'],
-      [4, 5, 6, 'Testing login flow scenarios. All assertions passing clean.', '2026-08-12 10:15:00']
+      [1, 1, 3, 'Wireframes and Figma design system components are updated and ready for review!', '2026-08-05 14:20:00'],
+      [2, 2, 4, 'Authentication REST endpoints are tested on Postman and ready for integration.', '2026-08-08 11:45:00'],
+      [3, 4, 12, 'Implement Navbar is currently in progress. Mobile drawer menu completed!', '2026-08-10 16:30:00']
     ];
 
     for (const [id, task_id, user_id, content, created_at] of comments) {
-      await pool.query(
-        `INSERT INTO comments (id, task_id, user_id, content, created_at)
-         VALUES (?, ?, ?, ?, ?)`,
-        [id, task_id, user_id, content, created_at]
-      );
+      await pool.query(`INSERT INTO comments (id, task_id, user_id, content, created_at) VALUES (?, ?, ?, ?, ?)`, [id, task_id, user_id, content, created_at]);
     }
     console.log('✅ Comments seeded');
 
     // 9. Activity Logs
     const activities = [
-      [1, 11, 1, 'Project', 1, 'Created', 'Demo Project Manager created project "Website Company Profile"', '2026-08-01 09:00:00'],
-      [2, 11, 1, 'Member', 12, 'Added', 'Demo Project Manager added Demo Member (Frontend Developer) to Website Company Profile', '2026-08-01 09:05:00'],
-      [3, 11, 1, 'Task', 4, 'Created', 'Demo Project Manager created task "Implement Navbar"', '2026-08-05 10:00:00'],
-      [4, 12, 1, 'Task', 4, 'Status Updated', 'Demo Member moved "Implement Navbar" from Todo to In Progress', '2026-08-05 11:30:00'],
-      [5, 12, 1, 'Task', 7, 'Status Updated', 'Demo Member moved "Fix Mobile Layout" from In Progress to Completed', '2026-08-08 14:00:00'],
-      [6, 12, 1, 'Comment', 2, 'Added', 'Demo Member added a comment on "Implement Navbar"', '2026-08-10 11:45:00']
+      [1, 2, 1, 'Project', 1, 'Created', 'Ravir created project "Website Company Profile"', '2026-08-01 09:00:00'],
+      [2, 2, 1, 'Member', 3, 'Added', 'Ravir added Yosiana (UI/UX Designer) to Website Company Profile', '2026-08-01 09:05:00'],
+      [3, 2, 1, 'Member', 4, 'Added', 'Ravir added Rivai (Backend Developer) to Website Company Profile', '2026-08-01 09:10:00'],
+      [4, 3, 1, 'Task', 1, 'Status Updated', 'Yosiana moved "Design Figma Wireframes & UI Kit" to Completed', '2026-08-05 11:30:00'],
+      [5, 4, 1, 'Task', 2, 'Status Updated', 'Rivai moved "Create REST API Authentication" to In Progress', '2026-08-08 14:00:00']
     ];
 
     for (const [id, user_id, project_id, entity_type, entity_id, action, description, created_at] of activities) {
       await pool.query(
-        `INSERT INTO activity_logs (id, user_id, project_id, entity_type, entity_id, action, description, created_at)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO activity_logs (id, user_id, project_id, entity_type, entity_id, action, description, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
         [id, user_id, project_id, entity_type, entity_id, action, description, created_at]
       );
     }
@@ -199,22 +174,17 @@ async function seed() {
 
     // 10. Notifications
     const notifications = [
-      [1, 12, 'task_assigned', 'You have been assigned task "Build Homepage"', 0, '2026-08-05 10:00:00'],
-      [2, 12, 'task_assigned', 'You have been assigned task "Implement Navbar"', 0, '2026-08-09 09:00:00'],
-      [3, 12, 'task_assigned', 'You have been assigned task "Responsive Dashboard"', 0, '2026-08-10 16:30:00'],
-      [4, 12, 'deadline_approaching', 'Task "Build Homepage" is due soon', 0, '2026-08-12 08:00:00']
+      [1, 3, 'task_assigned', 'You have been assigned task "Design Figma Wireframes & UI Kit"', 1, '2026-08-01 09:00:00'],
+      [2, 4, 'task_assigned', 'You have been assigned task "Create REST API Authentication"', 0, '2026-08-02 10:00:00'],
+      [3, 12, 'task_assigned', 'You have been assigned task "Build Homepage"', 0, '2026-08-05 10:00:00']
     ];
 
     for (const [id, user_id, type, message, is_read, created_at] of notifications) {
-      await pool.query(
-        `INSERT INTO notifications (id, user_id, type, message, is_read, created_at)
-         VALUES (?, ?, ?, ?, ?, ?)`,
-        [id, user_id, type, message, is_read, created_at]
-      );
+      await pool.query(`INSERT INTO notifications (id, user_id, type, message, is_read, created_at) VALUES (?, ?, ?, ?, ?, ?)`, [id, user_id, type, message, is_read, created_at]);
     }
     console.log('✅ Notifications seeded');
 
-    console.log('🎉 ProjectFlow Portfolio Seed Completed Successfully!');
+    console.log('🎉 ProjectFlow Database Seeded with Ravir, Yosiana, Rivai, Ryehan & Portfolio Demo Accounts!');
   } catch (error) {
     console.error('❌ Error seeding database:', error);
   }
