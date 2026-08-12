@@ -11,35 +11,8 @@ import {
   AlertCircle,
   Loader2,
   Sparkles,
-  ShieldCheck,
-  FolderKanban,
-  User,
-  CheckCircle2
+  ShieldCheck
 } from 'lucide-react';
-
-const DEMO_ACCOUNTS = [
-  {
-    role: 'Administrator',
-    email: 'demo-admin@projectflow.demo',
-    password: 'DemoAdmin123!',
-    description: 'Full system access',
-    icon: ShieldCheck
-  },
-  {
-    role: 'Project Manager',
-    email: 'demo-manager@projectflow.demo',
-    password: 'DemoManager123!',
-    description: 'Manage projects and tasks',
-    icon: FolderKanban
-  },
-  {
-    role: 'Member',
-    email: 'demo-member@projectflow.demo',
-    password: 'DemoMember123!',
-    description: 'Explore assigned tasks',
-    icon: User
-  }
-];
 
 export const Login = () => {
   const navigate = useNavigate();
@@ -53,7 +26,6 @@ export const Login = () => {
   const [errors, setErrors] = useState({});
   const [serverError, setServerError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [demoLoadingRole, setDemoLoadingRole] = useState(null);
 
   useEffect(() => {
     if (user) {
@@ -101,25 +73,8 @@ export const Login = () => {
     }
   };
 
-  const handleDemoLogin = async (account) => {
-    setServerError('');
-    setDemoLoadingRole(account.role);
-    try {
-      const res = await login(account.email, account.password);
-      if (res.success) {
-        navigate('/dashboard', { replace: true });
-      } else {
-        setServerError('Demo account sedang tidak tersedia. Silakan coba lagi.');
-      }
-    } catch (err) {
-      setServerError('Demo account sedang tidak tersedia. Silakan coba lagi.');
-    } finally {
-      setDemoLoadingRole(null);
-    }
-  };
-
   return (
-    <div className="min-h-screen bg-slate-50 bg-mesh-glow flex flex-col justify-center py-10 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+    <div className="min-h-screen bg-slate-50 bg-mesh-glow flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       {/* Background Ambient Glow Blobs */}
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-10 right-10 w-[400px] h-[400px] bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -127,7 +82,12 @@ export const Login = () => {
       {/* Floating Decorative Badges */}
       <div className="hidden lg:flex absolute top-12 left-16 items-center space-x-2 bg-white/80 backdrop-blur-md px-4 py-2 rounded-2xl border border-slate-200 shadow-sm animate-float">
         <Sparkles className="w-4 h-4 text-amber-500" />
-        <span className="text-xs font-bold text-slate-700">ProjectFlow Portfolio Demo</span>
+        <span className="text-xs font-bold text-slate-700">ProjectFlow SaaS Workspace</span>
+      </div>
+
+      <div className="hidden lg:flex absolute bottom-16 right-16 items-center space-x-2 bg-white/80 backdrop-blur-md px-4 py-2 rounded-2xl border border-slate-200 shadow-sm animate-float" style={{ animationDelay: '2s' }}>
+        <ShieldCheck className="w-4 h-4 text-emerald-500" />
+        <span className="text-xs font-bold text-slate-700">End-to-End Collaboration</span>
       </div>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10 text-center space-y-3">
@@ -151,8 +111,8 @@ export const Login = () => {
       </div>
 
       {/* Main Form Container */}
-      <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-        <div className="glass-card-premium p-6 sm:p-8 rounded-3xl border border-slate-200/90 shadow-2xl space-y-5">
+      <div className="mt-7 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
+        <div className="glass-card-premium p-6 sm:p-8 rounded-3xl border border-slate-200/90 shadow-2xl space-y-6">
           {serverError && (
             <div className="p-3.5 bg-rose-50 border border-rose-200 rounded-2xl text-xs text-rose-600 flex items-center space-x-2.5 shadow-xs">
               <AlertCircle className="w-4 h-4 flex-shrink-0" />
@@ -176,8 +136,8 @@ export const Login = () => {
                     setEmail(e.target.value);
                     if (errors.email) setErrors({ ...errors, email: null });
                   }}
-                  disabled={loading || !!demoLoadingRole}
-                  className={`w-full bg-slate-50/80 border rounded-2xl pl-10 pr-4 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none transition-all ${
+                  disabled={loading}
+                  className={`w-full bg-slate-50/80 border rounded-2xl pl-10 pr-4 py-3 text-xs text-slate-900 placeholder-slate-400 focus:outline-none transition-all ${
                     errors.email
                       ? 'border-rose-400 focus:border-rose-500 bg-rose-50/30'
                       : 'border-slate-200 focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-600/10'
@@ -204,8 +164,8 @@ export const Login = () => {
                     setPassword(e.target.value);
                     if (errors.password) setErrors({ ...errors, password: null });
                   }}
-                  disabled={loading || !!demoLoadingRole}
-                  className={`w-full bg-slate-50/80 border rounded-2xl pl-10 pr-10 py-2.5 text-xs text-slate-900 placeholder-slate-400 focus:outline-none transition-all ${
+                  disabled={loading}
+                  className={`w-full bg-slate-50/80 border rounded-2xl pl-10 pr-10 py-3 text-xs text-slate-900 placeholder-slate-400 focus:outline-none transition-all ${
                     errors.password
                       ? 'border-rose-400 focus:border-rose-500 bg-rose-50/30'
                       : 'border-slate-200 focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-600/10'
@@ -214,7 +174,7 @@ export const Login = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-2.5 text-slate-400 hover:text-slate-600 p-0.5 rounded transition-colors"
+                  className="absolute right-3.5 top-3 text-slate-400 hover:text-slate-600 p-0.5 rounded transition-colors"
                   tabIndex={-1}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -252,8 +212,8 @@ export const Login = () => {
             {/* Button "Masuk" */}
             <button
               type="submit"
-              disabled={loading || !!demoLoadingRole}
-              className="w-full py-3 px-4 rounded-2xl btn-gradient-primary text-white text-xs font-bold tracking-wide flex items-center justify-center space-x-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed group"
+              disabled={loading}
+              className="w-full py-3.5 px-4 rounded-2xl btn-gradient-primary text-white text-xs font-bold tracking-wide flex items-center justify-center space-x-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-2 group"
             >
               {loading ? (
                 <>
@@ -270,65 +230,11 @@ export const Login = () => {
           </form>
 
           {/* Link Register */}
-          <div className="pt-2 text-center text-xs text-slate-500">
+          <div className="pt-4 border-t border-slate-100 text-center text-xs text-slate-500">
             Belum punya akun?{' '}
             <Link to="/register" className="text-blue-600 hover:text-blue-700 hover:underline font-extrabold">
-              Daftar
+              Daftar Sekarang
             </Link>
-          </div>
-
-          {/* DEMO ACCESS SECTION (Requirement 2 & 9) */}
-          <div className="pt-4 border-t border-slate-200">
-            <div className="relative mb-3 text-center">
-              <span className="bg-white px-3 text-[11px] font-bold text-slate-400 uppercase tracking-widest">
-                Demo Access
-              </span>
-            </div>
-
-            <p className="text-center text-xs text-slate-500 font-medium mb-3">
-              Explore ProjectFlow with a demo account
-            </p>
-
-            <div className="space-y-2">
-              {DEMO_ACCOUNTS.map((acc) => {
-                const IconComp = acc.icon;
-                const isThisLoading = demoLoadingRole === acc.role;
-                const isAnyLoading = loading || !!demoLoadingRole;
-
-                return (
-                  <button
-                    key={acc.role}
-                    type="button"
-                    onClick={() => handleDemoLogin(acc)}
-                    disabled={isAnyLoading}
-                    className="w-full p-3 rounded-2xl bg-white border border-slate-200 hover:border-slate-400 hover:bg-slate-50 text-left transition-all flex items-center justify-between group disabled:opacity-50 disabled:cursor-not-allowed shadow-2xs"
-                  >
-                    <div className="flex items-center space-x-3 min-w-0">
-                      <div className="w-8 h-8 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center flex-shrink-0 group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
-                        <IconComp className="w-4 h-4" />
-                      </div>
-                      <div className="min-w-0">
-                        <h4 className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
-                          {acc.role}
-                        </h4>
-                        <p className="text-[11px] text-slate-500 truncate">{acc.description}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex-shrink-0 pl-2">
-                      {isThisLoading ? (
-                        <div className="flex items-center space-x-1.5 text-xs text-blue-600 font-bold">
-                          <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                          <span className="hidden sm:inline">Masuk...</span>
-                        </div>
-                      ) : (
-                        <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-blue-600 group-hover:translate-x-0.5 transition-all" />
-                      )}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
           </div>
         </div>
       </div>

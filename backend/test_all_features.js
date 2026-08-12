@@ -24,11 +24,11 @@ async function runAudit() {
     }
   }
 
-  // 1. Test Login for 3 Roles
+  // 1. Test Login for Team Accounts
   console.log('--- 1. Testing Auth & Login ---');
-  const adminLogin = await req('/auth/login', { method: 'POST', body: { email: 'demo-admin@projectflow.demo', password: 'DemoAdmin123!' } });
-  const managerLogin = await req('/auth/login', { method: 'POST', body: { email: 'demo-manager@projectflow.demo', password: 'DemoManager123!' } });
-  const memberLogin = await req('/auth/login', { method: 'POST', body: { email: 'demo-member@projectflow.demo', password: 'DemoMember123!' } });
+  const adminLogin = await req('/auth/login', { method: 'POST', body: { email: 'admin@gmail.com', password: 'password123' } });
+  const managerLogin = await req('/auth/login', { method: 'POST', body: { email: 'ravir@gmail.com', password: 'password123' } });
+  const memberLogin = await req('/auth/login', { method: 'POST', body: { email: 'yosiana@gmail.com', password: 'password123' } });
 
   if (!adminLogin.data?.success) errorsFound.push('Admin login failed');
   if (!managerLogin.data?.success) errorsFound.push('PM login failed');
@@ -118,7 +118,6 @@ async function runAudit() {
 
   // 8. Test Role Authorization Restrictions
   console.log('\n--- 8. Testing Authorization Security Checks ---');
-  // Admin tries to create project -> Should fail with 403
   const adminCreateProj = await req('/projects', { method: 'POST', body: { name: 'Unauthorized Admin Proj', start_date: '2026-08-01', due_date: '2026-08-30' } }, adminToken);
   if (adminCreateProj.status !== 403) {
     errorsFound.push(`Security flaw: Admin was able to create project (status ${adminCreateProj.status})`);
@@ -126,7 +125,6 @@ async function runAudit() {
     console.log('🔒 Security Check OK: Admin cannot create projects (403 Forbidden)');
   }
 
-  // Member tries to create project -> Should fail with 403
   const memberCreateProj = await req('/projects', { method: 'POST', body: { name: 'Unauthorized Member Proj', start_date: '2026-08-01', due_date: '2026-08-30' } }, memberToken);
   if (memberCreateProj.status !== 403) {
     errorsFound.push(`Security flaw: Member was able to create project (status ${memberCreateProj.status})`);

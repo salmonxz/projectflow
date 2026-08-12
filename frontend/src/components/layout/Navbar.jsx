@@ -11,8 +11,7 @@ import {
   ChevronDown,
   Check,
   Briefcase,
-  User,
-  Sparkles
+  User
 } from 'lucide-react';
 
 export const Navbar = ({ onToggleSidebar }) => {
@@ -20,8 +19,6 @@ export const Navbar = ({ onToggleSidebar }) => {
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const [showNotifMenu, setShowNotifMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
-
-  const isDemoUser = user?.email?.includes('projectflow.demo');
 
   return (
     <header className="h-16 bg-white/90 backdrop-blur-md border-b border-slate-200 sticky top-0 z-30 px-4 lg:px-8 flex items-center justify-between shadow-sm">
@@ -41,15 +38,6 @@ export const Navbar = ({ onToggleSidebar }) => {
             <Briefcase className="w-3.5 h-3.5 text-blue-600" />
             {user?.position_name || 'Tidak ada posisi'}
           </span>
-          {isDemoUser && (
-            <>
-              <span className="text-xs text-slate-300 font-medium">|</span>
-              <span className="bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-amber-500" />
-                Demo Mode
-              </span>
-            </>
-          )}
         </div>
       </div>
 
@@ -132,11 +120,6 @@ export const Navbar = ({ onToggleSidebar }) => {
                 <p className="text-[11px] text-slate-500 truncate">{user?.email}</p>
                 <div className="mt-2 flex items-center gap-1.5 flex-wrap">
                   <RoleBadge role={user?.role_name} />
-                  {isDemoUser && (
-                    <span className="bg-amber-50 text-amber-700 border border-amber-200 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                      Demo Mode
-                    </span>
-                  )}
                 </div>
               </div>
 
